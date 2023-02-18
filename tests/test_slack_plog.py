@@ -7,9 +7,16 @@ import logging
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-wh = "https://hooks.slack.com/services/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"
-sp = SlackPlog(wh)
-sp.setLevel(logging.DEBUG)
-logger.addHandler(sp)
+webhook = "https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX"
 
-logger.debug("test slack logs")
+def test_slack_log():
+    sp = SlackPlog(webhook)
+    sp.setLevel(logging.DEBUG)
+    logger.addHandler(sp)
+    assert logger.debug("test slack logs") == None
+
+def test_slack_plog_emit():
+    sp = SlackPlog(webhook)
+    log = "<LogRecord: __main__, 10, /tow_slack_plog/tests/test_slack_plog.py, 15, 'test slack logs'>"
+    res = sp.emit(log)
+    assert res.status_code == 404
