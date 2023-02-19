@@ -12,31 +12,40 @@ class SlackPlog(HTTPHandler):
         parsed_url = urlparse(slack_webhook_url)
         HTTPHandler.__init__(self, parsed_url.netloc, parsed_url.path, method="POST", secure=True)
 
-    # def mapLogRecord(self, record):
+    def mapLogRecord(self, record):
 
-    #     # text = self.format(record)
-    #     # payload = {
-    #     #     'attachments': [
-    #     #         text,
-    #     #     ],
-    #     # }
+        text = self.format(record)
+        payload = {
+            'attachments': [
+                text,
+            ],
+        }
 
-    #     # res = {
-    #     #     'payload': json.dumps(payload),
-    #     # }
-    #     return res
+        res = {
+            'payload': json.dumps(payload),
+        }
+        return res
 
     def emit(self, record):
+        print("map", self.mapLogRecord(record))
         webhook = WebhookClient(self.slack_webhook_url)
-        print('hook', webhook)
+        print('record', record)
 
         try:
             res = webhook.send(text=str(record))
-            print("res", res)
+            print("res status", res)
             return res
         except Exception as e:
             print("error", e)
             pass
+
+# webhook = "https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX"
+# logger = logging.getLogger(__name__)
+# sp = SlackPlog(webhook)
+# # sp.emit("my logs")
+# sp.setLevel(logging.DEBUG)
+# logger.addHandler(sp)
+# logger.debug("test slack logs")
 
 
 class SlackFormatter(logging.Formatter):
