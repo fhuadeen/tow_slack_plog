@@ -1,67 +1,40 @@
 """Main module for the Slack Plog package"""
-import json
 import logging
 from urllib.parse import urlparse
 from logging.handlers import HTTPHandler
 from slack_sdk.webhook import WebhookClient
+from datetime import datetime
 
 
 class SlackPlog(HTTPHandler):
     def __init__(self, slack_webhook_url):
         self.slack_webhook_url = slack_webhook_url
         parsed_url = urlparse(slack_webhook_url)
-        HTTPHandler.__init__(self, parsed_url.netloc, parsed_url.path, method="POST", secure=True)
-
-    def mapLogRecord(self, record):
-
-        text = self.format(record)
-        payload = {
-            'attachments': [
-                text,
-            ],
-        }
-
-        res = {
-            'payload': json.dumps(payload),
-        }
-        return res
+        # HTTPHandler.__init__(self, parsed_url.netloc, parsed_url.path, method="POST", secure=True)
+        super().__init__(parsed_url.netloc, parsed_url.path, method="POST", secure=True)
 
     def emit(self, record):
-        print("map", self.mapLogRecord(record))
+        print('record:', record)
+        print(type(record))
+        map_record = self.mapLogRecord(record)
+        created_at = datetime.fromtimestamp(map_record.get("created")).strftime("%Y-%m-%d %M:%s") # get the actual time
+        log = f"{map_record.get('levelname')}:    {created_at} - {map_record.get('filename')} - {map_record.get('msg')} - lineno: {map_record.get('lineno')}"
         webhook = WebhookClient(self.slack_webhook_url)
-        print('record', record)
 
         try:
-            res = webhook.send(text=str(record))
+            res = webhook.send(text=str(log))
             print("res status", res)
             return res
         except Exception as e:
             print("error", e)
             pass
 
+
+# LOG_FORMAT = logging.Formatter("%(levelname)s:    %(asctime)s: %(module)s - %(message)s")
 # webhook = "https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX"
-# logger = logging.getLogger(__name__)
 # sp = SlackPlog(webhook)
-# # sp.emit("my logs")
-# sp.setLevel(logging.DEBUG)
+# sp.setFormatter(LOG_FORMAT)
+# logger = logging.getLogger(__name__)
+# logger.setLevel(logging.DEBUG)
 # logger.addHandler(sp)
 # logger.debug("test slack logs")
-
-
-class SlackFormatter(logging.Formatter):
-    def format(self, record):
-        ret = {}
-        if record.levelname == 'INFO':
-            ret['color'] = 'good'
-        elif record.levelname == 'WARNING':
-            ret['color'] = 'warning'
-        elif record.levelname == 'ERROR':
-            ret['color'] = '#E91E63'
-        elif record.levelname == 'CRITICAL':
-            ret['color'] = 'danger'
-
-        ret['author_name'] = record.levelname
-        ret['title'] = record.name
-        ret['ts'] = record.created
-        ret['text'] = super(SlackFormatter, self).format(record)
-        return ret
