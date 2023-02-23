@@ -28,13 +28,3 @@ class SlackPlog(HTTPHandler):
         except Exception as e:
             print("error", e)
             pass
-
-
-# LOG_FORMAT = logging.Formatter("%(levelname)s:    %(asctime)s: %(module)s - %(message)s")
-# webhook = "https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX"
-# sp = SlackPlog(webhook)
-# sp.setFormatter(LOG_FORMAT)
-# logger = logging.getLogger(__name__)
-# logger.setLevel(logging.DEBUG)
-# logger.addHandler(sp)
-# logger.debug("test slack logs")
