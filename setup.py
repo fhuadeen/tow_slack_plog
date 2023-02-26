@@ -12,7 +12,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='slack-plog',
-    version='0.0.1',
+    version='0.1.0',
     description='Slack Python logging handler',
     py_modules=['tow_slack_plog'],
     package_dir={'': 'tow_slack_plog'},
