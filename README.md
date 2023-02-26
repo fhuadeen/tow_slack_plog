@@ -1,7 +1,7 @@
 # tow-slack-plog
 
-.. image:: https://img.shields.io/pypi/pyversions/slack-logger.svg?maxAge=2592000?style=flat-square
-:target: https://pypi.python.org/pypi/slack-logger
+.. image:: https://img.shields.io/pypi/pyversions/tow-slack-plog.svg?maxAge=2592000?style=flat-square
+:target: https://pypi.python.org/pypi/tow-slack-plog
 
 Python logging handler for Slack webhook integration with simple configuration.
 
